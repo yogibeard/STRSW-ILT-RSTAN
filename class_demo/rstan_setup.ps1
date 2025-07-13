@@ -185,7 +185,7 @@ if [ "$(hostname)" = "centos1" ]; then
    
 
    # Define the activation line
-   ACTIVATION_LINE="source ~/ansible-workshop/.venv/bin/ \n export ANSIBLE_FORCE_COLOR=1 \n export PY_COLORS=1"
+   ACTIVATION_LINE="source ~/ansible-workshop/.venv/bin/activate \n VIRTUAL_ENV_DISABLE_PROMPT=1 \n export ANSIBLE_FORCE_COLOR=1 \n export PY_COLORS=1"
    
    # Check if the line already exists in ~/.bashrc
    if grep -Fxq "$ACTIVATION_LINE" ~/.bashrc; then
