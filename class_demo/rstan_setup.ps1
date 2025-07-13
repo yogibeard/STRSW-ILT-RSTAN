@@ -185,13 +185,14 @@ if [ "$(hostname)" = "centos1" ]; then
    
 
    # Define the activation line
-   ACTIVATION_LINE="source ~/ansible-workshop/.venv/bin/activate"
+   ACTIVATION_LINE="source ~/ansible-workshop/.venv/bin/ \n export ANSIBLE_FORCE_COLOR=1 \n export PY_COLORS=1"
    
    # Check if the line already exists in ~/.bashrc
    if grep -Fxq "$ACTIVATION_LINE" ~/.bashrc; then
        echo "Virtual environment activation already present in ~/.bashrc"
    else
        echo -e "\n# Auto-activate Python virtual environment for ansible-workshop\n$ACTIVATION_LINE" >> ~/.bashrc
+       
        echo "Added virtual environment activation to ~/.bashrc"
    fi
    
