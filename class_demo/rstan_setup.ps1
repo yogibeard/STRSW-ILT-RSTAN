@@ -175,7 +175,7 @@ if [ "$(hostname)" = "centos1" ]; then
    
    # Install required Python packages
    echo "Installing required packages..."
-   pip install ansible ansible-lint jupyter netapp-lib oslo_log bash_kernel nbconvert
+   pip install ansible ansible-lint jupyter netapp-lib oslo_log bash_kernel nbconvert netapp_ontap
    
    # Register the bash kernel with Jupyter
    echo "Registering bash kernel with Jupyter..."
@@ -185,7 +185,7 @@ if [ "$(hostname)" = "centos1" ]; then
    
 
    # Define the activation line
-   ACTIVATION_LINE="source ~/ansible-workshop/.venv/bin/activate \n VIRTUAL_ENV_DISABLE_PROMPT=1 \n export ANSIBLE_FORCE_COLOR=1 \n export PY_COLORS=1"
+   ACTIVATION_LINE="source ~/ansible-workshop/.venv/bin/activate \n export VIRTUAL_ENV_DISABLE_PROMPT=1 \n export ANSIBLE_FORCE_COLOR=1 \n export PY_COLORS=1"
    
    # Check if the line already exists in ~/.bashrc
    if grep -Fxq "$ACTIVATION_LINE" ~/.bashrc; then
