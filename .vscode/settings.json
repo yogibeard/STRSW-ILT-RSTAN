@@ -1,0 +1,21 @@
+{
+    "remote.SSH.remotePlatform": {
+        "centos1": "linux"
+    },
+    "ansible.validation.lint.enabled": false,
+    "workbench.colorTheme": "Default Dark+",
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
+    "editor.fontFamily": "'Monaspace Neon', monospace",
+    "editor.inlineSuggest.fontFamily": "'Monaspace Krypton', monospace",
+    "editor.fontLigatures": "'calt', 'liga', 'ss01', 'ss02', 'ss03', 'ss04', 'ss05', 'ss06', 'ss07', 'ss08', 'ss09'",
+    "editor.fontSize": 14,
+    "markdown.preview.fontFamily": "",
+    "markdown.preview.lineHeight": 1,
+    "markdown.preview.fontSize": 14,
+    "notebook.markup.fontSize": 18,
+    "python.terminal.shellIntegration.enabled": true,
+    "editor.minimap.enabled": false,
+    "editor.accessibilitySupport": "off",
+    "notebook.output.scrolling": true,
+    "security.workspace.trust.untrustedFiles": "open"
+}
