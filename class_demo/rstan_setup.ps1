@@ -1,4 +1,4 @@
-# Scritp updated 20250713 RSTAN
+# Scritp updated 20250714 RSTAN
 # Prompt for root password
 
 $rootPassword = Read-Host -AsSecureString "Enter Lab Default password"
@@ -93,8 +93,25 @@ if grep -q "CentOS Linux release 8" /etc/redhat-release; then
           # Comment out all lines starting with 'failovermethod='
           sed -i 's/^failovermethod=/# failovermethod=/' "$file"
       fi
-  done
-  echo "All applicable 'failovermethod' lines have been commented out."
+      done
+      echo "All applicable 'failovermethod' lines have been commented out."
+      
+      echo "Disabling custom Python 3.11 in /usr/local/bin..."
+        
+      # Rename or remove custom Python 3.11 binaries
+      for bin in /usr/local/bin/python3.11 /usr/local/bin/python3.11-config /usr/local/bin/ansible /usr/local/bin/pip /usr/local/bin/pip3 /usr/local/bin/pip3.11; do
+          if [ -f "$bin" ]; then
+              sudo mv "$bin" "${bin}.disabled"
+              echo "Disabled $bin"
+          fi
+      done
+        
+        
+      # Remove broken symlink
+      if [ -L /usr/local/bin/python3 ]; then
+        sudo rm -f /usr/local/bin/python3
+        echo "Removed broken symlink /usr/local/bin/python3"
+      fi
     
   echo "Installing Python 3.9 from AppStream..."
   sudo dnf module enable -y python39
@@ -114,35 +131,6 @@ if grep -q "CentOS Linux release 8" /etc/redhat-release; then
   sudo alternatives --install /usr/bin/pip pip /usr/bin/pip3.9 100
   sudo alternatives --set pip /usr/bin/pip3.9
     
-  echo "Disabling custom Python 3.11 in /usr/local/bin..."
-    
-  # Rename or remove custom Python 3.11 binaries
-  for bin in /usr/local/bin/python3.11 /usr/local/bin/python3.11-config; do
-      if [ -f "$bin" ]; then
-          sudo mv "$bin" "${bin}.disabled"
-          echo "Disabled $bin"
-      fi
-  done
-    
-  # Rename or remove custom pip 3.11 binaries
-  for bin in /usr/local/bin/pip3.11 /usr/local/bin/pip3.11-config; do
-      if [ -f "$bin" ]; then
-          sudo mv "$bin" "${bin}.disabled"
-          echo "Disabled $bin"
-      fi
-  done
-    
-  # Remove broken symlink
-  if [ -L /usr/local/bin/python3 ]; then
-    sudo rm -f /usr/local/bin/python3
-    echo "Removed broken symlink /usr/local/bin/python3"
-  fi
-
-  # Remove broken symlink
-  if [ -f /usr/local/bin/pip3 ]; then
-    sudo rm -f /usr/local/bin/pip3
-    echo "Removed broken symlink /usr/local/bin/pip3"
-  fi
     
     
   echo "Python version now set to:"
@@ -153,46 +141,63 @@ if grep -q "CentOS Linux release 8" /etc/redhat-release; then
   
 fi
 
-# Clone the Class Labs Git Repo and setup venv. Install ansible
 
+if [ "$(hostname)" = "centos1" ]; then
+   echo "Running on centos1"
 
-# Exit immediately if a command exits with a non-zero status
-#set -e
+   # Clone the Class Labs Git Repo and setup venv. Install ansible
+   
+   
+   # Exit immediately if a command exits with a non-zero status
+   #set -e
+   
+   # Define the target directory
+   TARGET_DIR="$HOME/ansible-workshop"
+   
+   # Clone the Git repository into the target directory
+   echo "Cloning Git repository into $TARGET_DIR..."
+   git clone https://github.com/yogibeard/STRSW-ILT-RSTAN.git "$TARGET_DIR"
+   
+   
+   # Navigate to the project directory
+   cd "$TARGET_DIR"
+   
+   # Create a Python virtual environment in the project directory
+   echo "Creating Python virtual environment in $TARGET_DIR/.venv..."
+   python3 -m venv .venv
+   
+   # Activate the virtual environment
+   source .venv/bin/activate
+   
+   # Upgrade pip
+   echo "Upgrading pip..."
+   pip install --upgrade pip
+   
+   # Install required Python packages
+   echo "Installing required packages..."
+   pip install ansible ansible-lint jupyter netapp-lib oslo_log bash_kernel nbconvert
+   
+   # Register the bash kernel with Jupyter
+   echo "Registering bash kernel with Jupyter..."
+   python -m bash_kernel.install
+   
+   chmod -R +x /root/.ansible/collections/
+   
 
-# Define the target directory
-TARGET_DIR="$HOME/ansible-workshop"
-
-# Clone the Git repository into the target directory
-echo "Cloning Git repository into $TARGET_DIR..."
-git clone https://github.com/yogibeard/STRSW-ILT-RSTAN.git "$TARGET_DIR"
-
-
-# Navigate to the project directory
-cd "$TARGET_DIR"
-
-# Create a Python virtual environment in the project directory
-echo "Creating Python virtual environment in $TARGET_DIR/.venv..."
-python3 -m venv .venv
-
-# Activate the virtual environment
-source .venv/bin/activate
-
-# Upgrade pip
-echo "Upgrading pip..."
-pip install --upgrade pip
-
-# Install required Python packages
-echo "Installing required packages..."
-pip install ansible ansible-lint jupyter netapp-lib oslo_log bash_kernel nbconvert
-
-# Register the bash kernel with Jupyter
-echo "Registering bash kernel with Jupyter..."
-python -m bash_kernel.install
-
-chmod -R +x /root/.ansible/collections/
-
-echo "Setup complete. Virtual environment is ready in $TARGET_DIR/.venv"
-
+   # Define the activation line
+   ACTIVATION_LINE="source ~/ansible-workshop/.venv/bin/activate"
+   
+   # Check if the line already exists in ~/.bashrc
+   if grep -Fxq "$ACTIVATION_LINE" ~/.bashrc; then
+       echo "Virtual environment activation already present in ~/.bashrc"
+   else
+       echo -e "\n# Auto-activate Python virtual environment for ansible-workshop\n$ACTIVATION_LINE" >> ~/.bashrc
+       echo "Added virtual environment activation to ~/.bashrc"
+   fi
+   
+   
+   echo "Setup complete. Virtual environment is ready in $TARGET_DIR/.venv"
+fi
 '@
   
 # Save Bash script to a file
