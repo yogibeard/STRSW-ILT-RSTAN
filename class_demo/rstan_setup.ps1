@@ -1,4 +1,4 @@
-# Scritp updated 20250714 RSTAN
+# Script updated 20250714 RSTAN
 # Prompt for root password
 
 $rootPassword = Read-Host -AsSecureString "Enter Lab Default password"
